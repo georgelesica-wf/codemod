@@ -10,7 +10,7 @@ class Query(object):
     Represents a suggestor, along with a set of constraints on which files
     should be fed to that suggestor.
 
-    >>> Query(lambda x: None, start='profile.php:20').start_position
+    >>> Query(lambda lines, path: None, start='profile.php:20').start_position
     Position('profile.php', 20)
     """
     def __init__(self,
@@ -25,7 +25,8 @@ class Query(object):
 
         """
         @param suggestor            A function that takes a list of lines and
-                                    generates instances of Patch to suggest.
+                                    a path and generates instances of Patch to
+                                    suggest.
                                     (Patches should not specify paths.)
         @param start                One of:
                                     - an instance of Position
@@ -150,7 +151,7 @@ class Query(object):
                 # destination no loner exists--then short-circuit.
                 continue
 
-            for patch in self.suggestor(lines):
+            for patch in self.suggestor(lines, path):
                 if path == start_pos.path:
                     if patch.start_line_number < start_pos.line_number:
                         continue  # suggestion is pre-start_pos
